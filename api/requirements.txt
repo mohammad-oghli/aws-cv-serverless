@@ -1,0 +1,5 @@
+flask
+serverless-wsgi
+numpy
+opencv-python-headless
+openvino==2022.3.1
