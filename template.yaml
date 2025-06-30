@@ -1,0 +1,101 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+# Container-image SAM template
+
+Globals:
+  Function:
+    Timeout: 50
+    MemorySize: 5000
+    Tracing: Active
+    # You can add LoggingConfig parameters such as the Logformat, Log Group, and SystemLogLevel or ApplicationLogLevel. Learn more here https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-loggingconfig.
+    LoggingConfig:
+      LogFormat: JSON
+  Api:
+    BinaryMediaTypes:
+    - image/png
+    - image/jpg
+    - image/jpeg
+
+    TracingEnabled: true
+Resources:
+  InferenceFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      PackageType: Image
+      Architectures:
+      - x86_64
+      Events:
+        Index:
+            Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+            Properties:
+              Path: /
+              Method: get
+        ClassifyImage:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /classify_image
+            Method: post
+        RoadSegmentation:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /road_segmentation
+            Method: post
+        Superresolution:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /super_resolution
+            Method: post
+        ObjectDetection:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /object_detection
+            Method: post
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: ./api
+      DockerTag: python3.9-v1
+
+  ApplicationResourceGroup:
+    Type: AWS::ResourceGroups::Group
+    Properties:
+      Name:
+        Fn::Sub: ApplicationInsights-SAM-${AWS::StackName}
+      ResourceQuery:
+        Type: CLOUDFORMATION_STACK_1_0
+  ApplicationInsightsMonitoring:
+    Type: AWS::ApplicationInsights::Application
+    Properties:
+      ResourceGroupName:
+        Ref: ApplicationResourceGroup
+      AutoConfigurationEnabled: 'true'
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  Index:
+    Description: API Gateway endpoint URL for Prod stage for Root
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+
+  ClassifyImage:
+    Description: API Gateway endpoint URL for Prod stage for Classify Image
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/classify_image/"
+
+  RoadSegmentation:
+    Description: API Gateway endpoint URL for Prod stage for Super Resolution
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/road_segmentation/"
+
+  Superresolution:
+    Description: API Gateway endpoint URL for Prod stage for Super Resolution
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/super_resolution/"
+
+  ObjectDetection:
+    Description: API Gateway endpoint URL for Prod stage for Super Resolution
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/object_detection/"
+
+  InferenceFunction:
+    Description: Inference Lambda Function ARN
+    Value: !GetAtt InferenceFunction.Arn
+  InferenceFunctionIamRole:
+    Description: Implicit IAM Role created for Inference function
+    Value: !GetAtt InferenceFunctionRole.Arn
