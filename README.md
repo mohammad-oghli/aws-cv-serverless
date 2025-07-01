@@ -40,8 +40,7 @@ You can use image samples in the **/images/Image_classification** directory to t
 
 Road Segmentation is a lightweight, real-time **semantic segmentation** deep learning model designed for **Advanced Driver Assistance Systems (ADAS)** and autonomous driving applications. Its primary task is to segment and identify drivable road areas in images or video frames captured from vehicle-mounted cameras.
 
-**Key Features
-**
+**Key Features**
 * Task: Road Area Segmentation (Pixel-wise classification)
 
 * Input: RGB image (typically from front-facing car camera)
@@ -61,17 +60,15 @@ You can use image samples in the **/images/road_segmentation** directory to test
 
 Super Resolution is a Deep Learning model to enhance low resolution image to high quality image.
 
-The service is based on **Single Image Super Resolution (SISR)** deep learning model which is available on Open Model Zoo, check this [page](https://docs.openvino.ai/latest/omz_models_model_single_image_super_resolution_1032.html) for more info.
+The model is based on **Single Image Super Resolution (SISR)** deep learning model which is available on Open Model Zoo, check this [page](https://docs.openvino.ai/latest/omz_models_model_single_image_super_resolution_1032.html) for more info.
 
 **Super Resolution** is the process of enhancing the quality of an image by increasing the pixel count using deep learning.
+
+**Specification**
 
 * The model (Neural Network) expects inputs with a width of **480**, height of **270**.
 * The model returns images with a width of **1920**, height of **1080**.
 * The image sides are upsampled by a factor **4**. The new image is **16** times as large as the original image.
-
-In brief:
-* Input image should be: **480x270** resolution.
-* Output image : **1920x1080** resolution.
 
 It has applications in a number of domains including surveillance and security, medical imagery and enhancing Satellite images from the space.
 
@@ -83,7 +80,7 @@ You can use image samples in the **/images/super_resolution** directory to test 
 
 ![object detection](docs_assets/object_detection.png)
 
-Object Detection is a pre-trained **MobileNet** deep learning model built using the Caffe deep learning framework. This model typically refers to a MobileNet-v1 architecture, on the **ImageNet** (ILSVRC 2012) dataset.
+Object Detection is a pre-trained **MobileNet** deep learning model built using the Caffe deep learning framework. This model typically refers to a MobileNet-v1 architecture, trained on the **ImageNet** (ILSVRC 2012) dataset.
 
 **Features**
 
@@ -91,7 +88,9 @@ Object Detection is a pre-trained **MobileNet** deep learning model built using 
 
 * Depthwise Separable Convolutions for lightweight computation
 
-Object detection `mobilenet_iter_73000` model deployed using **OpenCV DNN** module for lightweight CV applications.
+* Faster inference with minimal Memory usage
+
+The Object detection model `mobilenet_iter_73000`  deployed using **OpenCV DNN** module for lightweight CV applications.
 
 You can use image samples in the **/images/object_detection** directory to test it on the model.
 
@@ -110,7 +109,9 @@ It packages multiple deep learning models and exposes their functionalities thro
 
 * **model.py**: Contains ML model inference logic. 
 
-* **server**: Flask app defines routes/endpoints, runs inference, returns API responses.
+* **server.py**: Flask app defines routes/endpoints, runs inference, returns API responses.
+
+* **template.yaml**: AWS SAM template file that Defines required AWS resources such as Lambda functions, API Gateway routes, and deployment settings.
 
 
 **Flask API Typical Flow in Lambda**
@@ -228,13 +229,29 @@ Each ML inference task is exposed via a dedicated API endpoint:
 | `/super_resolution`  | Super Resolution     |
 | `/object_detection`  | Object Detection     |
 
-The entire inference logic runs inside one Lambda container, triggered by API Gateway HTTP endpoints. Monitoring, tracing, and logging are fully enabled with CloudWatch, X-Ray, and Application Insights.
+The entire inference logic runs inside a single Lambda container, triggered by API Gateway HTTP endpoints, with monitoring, tracing, and logging fully enabled through CloudWatch, X-Ray, and Application Insights.
+
+### Important Note for Architecture
+
+For the purpose of this hackathon project, we implemented all Computer Vision inference endpoints (image classification, object detection, super resolution, etc.) inside a **single AWS Lambda function** deployed as a container image, with multiple API Gateway routes.
+
+This decision was made to optimize for development speed, deployment simplicity, and reduced AWS resource configuration overhead, which is critical for the time constraints.
+
+However, for **production-grade deployments**, we recommend adopting a multi-Lambda architecture (one function per model/endpoint), for better:
+
+* Cold start performance
+* Scaling flexibility
+* Resource isolation
+* Simpler CI/CD for individual models
+* Lower runtime memory usage
+
+This approach also helps meet best practices for serverless ML workloads on AWS.
 
 ## Models Deployment using AWS SAM CLI
 
-* First you need to install [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html) on your device
+* First you need to install [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html) on your device and then verify installation 
 
-    ```pip install awscli```
+    ```sam --version```
 
 * Change directory to Lambda Serverless Application folder
 
@@ -267,3 +284,16 @@ The entire inference logic runs inside one Lambda container, triggered by API Ga
     Example:
 
     `sam logs --stack-name aws-cv-serverless --name InferenceFunction --tail --region us-east-1`
+
+## References
+
+[MobileNet-v3-Small: Optimized for Mobile Deployment
+](https://huggingface.co/qualcomm/MobileNet-v3-Small)
+
+[Road Segmentation for ADAS/AD Applications
+](https://arxiv.org/html/2505.12206v1)
+
+[Single Image Super Resolution Research Paper](https://arxiv.org/abs/1807.06779)
+
+[MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications](https://arxiv.org/abs/1704.04861)
+
