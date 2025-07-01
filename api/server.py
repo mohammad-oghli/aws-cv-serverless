@@ -25,7 +25,7 @@ def cls_img_inference():
         return jsonify({"img_class": image_class})
     return jsonify({"message": "Sorry, Invalid Image Parameter!"})
 
-# Super Resolution API endpoint
+# Road Segmentation API endpoint
 @app.route('/road_segmentation', methods=['POST'])
 def rseg_inference():
     data = request.get_json()
