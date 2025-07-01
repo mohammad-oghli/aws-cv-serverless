@@ -271,7 +271,7 @@ This approach also helps meet best practices for serverless ML workloads on AWS.
     
     You can now test the serverless API endpoints 
 
-* After the Lamda serverless application worked successfully on your device you can deploy it with the required resources on AWS using defined `template.yaml` file
+* After the Lambda serverless application worked successfully on your device you can deploy it with the required resources on AWS using defined `template.yaml` file
 
     `sam deploy --guided`
 
