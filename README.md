@@ -111,7 +111,7 @@ It packages multiple deep learning models and exposes their functionalities thro
 
 * **server.py**: Flask app defines routes/endpoints, runs inference, returns API responses.
 
-* **template.yaml**: AWS SAM template file that Defines required AWS resources such as Lambda functions, API Gateway routes, and deployment settings.
+* **template.yaml**: AWS SAM template file that defines required AWS resources such as Lambda functions, API Gateway routes, and deployment settings.
 
 
 **Flask API Typical Flow in Lambda**
