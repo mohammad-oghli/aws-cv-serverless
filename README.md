@@ -247,6 +247,39 @@ However, for **production-grade deployments**, we recommend adopting a multi-Lam
 
 This approach also helps meet best practices for serverless ML workloads on AWS.
 
+## Model Stacking for Complex Workflow
+
+Model stacking can act as a modular and intelligent layer in multi-stage ML pipelines, allowing you to combine the strengths of multiple specialized models.
+
+**Multi-task Pipelines**
+
+In our CV inference endpoints we could build a pipeline that does object detection → classification → data extraction by using stacking to combine outputs from each step into a final decision.
+
+![Model Stacking object detection](docs_assets/model_stacking_1.png)
+
+In this example we will feed **object detection** model output into **image classification** model as input by cropping detected objects and sending them as inputs to classification model
+
+![image classification object cat](docs_assets/model_stacking_2.png)
+
+`{'img_class': 'tabby, tabby cat'}`
+
+![image classification object broom](docs_assets/model_stacking_3.png)
+
+`{'img_class': 'broom'}`
+
+You can see that we run image classification on each detected object seperately to get each object category. 
+
+Another use case is you can extract specific detected object from the image according to its class such as **coral**. 
+
+![object detection coral reef](docs_assets/coral_underwater.png)
+
+Extracted object based on coral class
+
+![image classification coral object](docs_assets/extracted_coral_object.png)
+
+`{'img_class': 'brain coral'}`
+
+
 ## Models Deployment using AWS SAM CLI
 
 * First you need to install [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html) on your device and then verify installation 
