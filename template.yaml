@@ -82,7 +82,7 @@ Outputs:
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/classify_image/"
 
   RoadSegmentation:
-    Description: API Gateway endpoint URL for Prod stage for Super Resolution
+    Description: API Gateway endpoint URL for Prod stage for Road Segmentation
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/road_segmentation/"
 
   Superresolution:
@@ -90,7 +90,7 @@ Outputs:
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/super_resolution/"
 
   ObjectDetection:
-    Description: API Gateway endpoint URL for Prod stage for Super Resolution
+    Description: API Gateway endpoint URL for Prod stage for Object Detection
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/object_detection/"
 
   InferenceFunction:
