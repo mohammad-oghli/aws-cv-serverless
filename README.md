@@ -318,6 +318,11 @@ Extracted object based on coral class
 
     `sam logs --stack-name aws-cv-serverless --name InferenceFunction --tail --region us-east-1`
 
+## Project Sponsor
+
+[Yasmeen AI](https://www.linkedin.com/company/yasmeen-ai/)
+
+
 ## References
 
 [MobileNet-v3-Small: Optimized for Mobile Deployment
